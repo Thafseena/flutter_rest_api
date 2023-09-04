@@ -1,8 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_rest_api/model/user.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_rest_api/services/user_services.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,6 +13,13 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   List<User> users= [];
   @override
+  void initState() {
+    
+    // TODO: implement initState
+    super.initState();
+    fetchUsers();
+  }
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -24,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
         itemBuilder: (context,index){
           final user = users[index];
            final email = user.email;
-           final color = user.gender == 'male' ? Colors.blue : Colors.pinkAccent;
+          //  final color = user.gender == 'male' ? Colors.blue : Colors.pinkAccent;
           // final name = user['name']['first'];
           // final email = user['email'];
           // final imageUrl = user['picture']['thumbnail'];
@@ -35,21 +41,27 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Image.network(imageUrl)),
             title: Text(name), */
             // subtitle:Text(email) ,
-          title: Text(user.name.first),
-          subtitle: Text(user
-          .phone),
-          tileColor: color,
+          title: Text(user.fullName),
+          subtitle: Text(user.location.postcode),
+          // subtitle: Text(user.phone),
+          // subtitle: Text(user.phone),
+          // tileColor: color,
           );
         }),
-      floatingActionButton: FloatingActionButton(
-        onPressed:fetchUsers,
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed:fetchUsers,
       
-      ),
+      // ),
 
     );
   }
-
-  void fetchUsers() async {
+  Future<void> fetchUsers()async{
+    final response =await UserApi.fetchUsers();
+    setState(() {
+      users = response ;
+    });
+  }
+  /* Future<void> fetchUsers() async {
     print("fetchUsers called");
    
     const url = "https://randomuser.me/api/?results=100";
@@ -80,5 +92,5 @@ class _HomeScreenState extends State<HomeScreen> {
      users = transformed; 
   });
    print("fetchUsers completed");
-  }
-}
+  }*/
+} 
